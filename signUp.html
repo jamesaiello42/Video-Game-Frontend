@@ -1,0 +1,86 @@
+<html>
+   <head>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-cookies.js"></script>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+      <title>Sign Up</title>
+      <script type="text/javascript">
+         var app = angular.module("Signup", ['ngCookies']);
+         
+         app.controller("SignupController", ['$scope', '$http','$cookies', '$window', function ($scope, $http, $cookies, $window) {
+         
+		$scope.wrongText = "";
+		$scope.showError = "false";
+         
+		$scope.signup = function() {
+         
+                 var method = "";
+                 var url = "";
+                     method = "POST";
+                     url = 'http://localhost:8080/users/register';
+         
+                 $http({
+                     method : method,
+                     url : url,
+                     data : angular.toJson($scope.signupForm),
+                     headers : {
+                         'Content-Type' : 'application/json'
+                     }
+                 }).then( _success, _error );
+             };
+         
+         
+             function _success(response) {
+				$window.location.href = 'users.html';
+				$cookies.put("user", response.data.id);
+             }
+			 
+			function _error(response) {
+					$scope.showError = "true";
+                    $scope.wrongText = "Something went wrong with this form";
+            }
+         
+         
+         }]);
+      </script>
+      <head>
+   <body ng-app="Signup" ng-controller="SignupController">
+	<div class="jumbotron jumbotron-fluid">
+		<div class="container">
+			<h1 class="display-2">Create Account</h1>
+		</div>
+	</div>
+	<div ng-show={{showError}} class="alert alert-danger" role="alert">
+		{{wrongText}}
+	</div>
+      <form ng-submit="signup()">
+         <div class="mb-3 row">
+			<div class="col-sm-7">
+				<input type="text" class="form-control" id="autoSizingInput" placeholder= "Username" ng-model = "signupForm.username" required>
+			</div>
+         </div>
+         <div class="mb-3 row">
+			<div class="col-sm-7">
+				<input type="email" class="form-control" id="autoSizingInput" placeholder= "Email" ng-model = "signupForm.email" required>
+			</div>
+         </div>
+         <div class="mb-3 row">
+			<div class="col-sm-7">
+				<input type="password" class="form-control" id="autoSizingInput" placeholder= "Password" ng-model = "signupForm.password" required>
+			</div>
+         </div>
+         <div class="mb-3 row">
+			<div class="col-sm-7">
+				<input type="text" class="form-control" id="autoSizingInput" placeholder= "First Name" ng-model = "signupForm.firstName" required>
+			</div>
+         </div>
+         <div class="mb-3 row">
+			<div class="col-sm-7">
+				<input type="text" class="form-control" id="autoSizingInput" placeholder= "Last Name" ng-model = "signupForm.lastName" required>
+			</div>
+         </div>
+         <button type="submit" class="btn btn-primary">Create Account</button>
+      </form>
+   </body>
+</html>
+

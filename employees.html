@@ -1,0 +1,110 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-cookies.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+<title>Employees</title>
+<script type="text/javascript">
+
+            var app = angular.module("employees", ['ngCookies']);
+ 
+            app.controller("employeesController", ['$scope', '$http','$cookies', '$window', function ($scope, $http, $cookies, $window) {
+ 
+ 
+                $scope.submitProduct = function() {
+						var method = "";
+						var url = "";
+							//Id is absent in form data, it is create new customer operation
+							method = "POST";
+							url = 'http://localhost:8080/products/create/' + productForm.productList.toLowerCase();
+
+	 
+						$http({
+							method : method,
+							url : url,
+							data : angular.toJson($scope.productForm),
+							headers : {
+								'Content-Type' : 'application/json'
+							}
+						}).then( _success, _error );
+					
+	 
+	  
+					function _success(response) {
+						$scope.wrongText = "";
+					}
+	 
+					function _error(response) {
+						$scope.wrongText = "Wrong password or username";
+					}
+	 
+				};
+ 
+				var method = "";
+                var url = "";
+                method = "GET";
+                url = 'http://localhost:8080/employees/' + $cookies.get("employee");
+
+ 
+				$http({
+                        method : method,
+                        url : url,
+                        data : angular.toJson($scope.customerForm),
+                        headers : {
+                            'Content-Type' : 'application/json'
+                        }
+                }).then( _success);
+ 
+  
+                function _success(response) {
+					$scope.employeeName = response.data.firstName + " " + response.data.lastName;
+                }
+   
+            }]);
+        </script>
+</head>
+<body ng-app="employees" ng-controller="employeesController">
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		 Welcome employee {{employeeName}}, I wish you good luck with your day of work.
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+    <form ng-submit="submitProduct()">
+		<div class="jumbotron jumbotron-fluid">
+			<div class="container">
+				<h1 class="display-2">Add New Product</h1>
+			</div>
+		</div>
+		<div class="form-floating">
+			<select class="form-select" ng-model="productForm.productList" required>
+				<option disabled selected value> -- Select an Option -- </option>
+				<option value="Game" selected>Game</option>
+				<option value="Platform">Platform</option>
+			</select>
+			<label>Product Type Picklist</label>
+		</div>
+		<div class="form-floating" ng-model="productForm.game.name">
+			<input type="text" class="form-control" required>
+			<label>Product {{productForm.productList}} Name</label>
+		</div>
+		<div ng-show = "productForm.productList == 'Platform' ? true : false" class="form-floating">
+			<input type="text" class="form-control" required>
+			<label>Vendor</label>
+		</div>
+		<div class="form-floating">
+			<input type="text" class="form-control" required>
+			<label>Number in Stock</label>
+		</div>
+		<div class="form-floating">
+			<input type="text" class="form-control"  required>
+			<label>Price</label>
+		</div>
+		<div class="form-floating">
+			<input type="date" class="form-control" required>
+			<label>Release Date</label>
+		</div>
+		</br>
+		<button type="submit" class="btn btn-primary mb-3">Create Product {{productForm.productList}}</button>
+    </form>
+</body>
+</html>
